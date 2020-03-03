@@ -1,0 +1,21 @@
+Welcome to Meme Mart!
+Here are the available goods:
+
+--- Utility ---
+[done]: Leave Meme Mart with your orders
+[exit]: Leave Meme Mart with no orders
+[order]: See your chosen orders
+[menu]: Bring up this menu
+
+--- Classes ---
+[dragon.all]: All units have their class set to Manakete, and their items replaced with Dragonstones.
+[dragon.me]: Only the playable units are all made Manaketes.
+
+--- Items --- (See Item_nr_chart.txt)
+[69]: Every weapon has its hit and max durability set to 69 (Infinite durablilty is maintained)
+[bridge]: Every item and weapon gets the name, icon, and description of the Bridge Key.
+[allitem.<item number>]: Every item and weapon gets the name, icon, and description of the item whose Item Number you input.
+[devil]: Every weapon gets the Devil effect.
+[brave]: Every weapon gets the Brave effect.
+
+-------------------------------------------------------------------------------------------------
