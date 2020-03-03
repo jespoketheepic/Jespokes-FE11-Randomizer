@@ -12,7 +12,7 @@ import GeneralUtility
 import UnsafeTestkit
 
 fixedPreRandoEdits :: DatabaseStruct -> DatabaseStruct
-fixedPreRandoEdits db@DatabaseStruct{classes} = db{classes=falconKnightInPool classes}
+fixedPreRandoEdits db@DatabaseStruct{classes} = db{classes= map (markPromotesFrom classes) (falconKnightInPool classes)}
 
 fixedPostRandoDispEdits :: [DisposFile] -> [DisposFile]
 fixedPostRandoDispEdits dispFs = prfPreservation $ saveWhitewings dispFs
@@ -111,6 +111,11 @@ markDontGive 0x46 = False
 markDontGive 0x47 = False
 markDontGive x = True
 
+markPromotesFrom :: [Class] -> Class -> Class
+markPromotesFrom classes cls@Class{classNr=clsNr} =
+  cls{promotesFrom= case promotesFromTable clsNr of {Nothing -> Nothing; Just prevo -> find (\x -> prevo == classNr x) classes}}
+
+
 prfReport :: DatabaseStruct -> Directory -> IO ()
 prfReport db@DatabaseStruct{characters} dir = do
   let rapier = find (\chr -> prf chr == (0x04,0)) characters
@@ -129,10 +134,3 @@ prfReport db@DatabaseStruct{characters} dir = do
   appendFile (dir ++ "\\Prf_Log.txt") (case hammerne of {Nothing -> "Nobody"; Just chr -> snd (pID chr)} ++ " can wield the Hammerne staff.\n")
   let aum = find (\chr -> prf chr == (0x09,0)) characters
   appendFile (dir ++ "\\Prf_Log.txt") (case aum of {Nothing -> "Nobody"; Just chr -> snd (pID chr)} ++ " can wield the Aum staff.\n")
-
-
-find_w_error :: (a -> Bool) -> [a] -> String -> a
-find_w_error pred list message = fromMaybe (error message) (find pred list)
-
-findIndex_w_error :: (a -> Bool) -> [a] -> String -> Int
-findIndex_w_error pred list message = fromMaybe (error message) (findIndex pred list)

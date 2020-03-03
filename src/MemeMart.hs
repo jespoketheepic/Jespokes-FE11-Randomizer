@@ -17,6 +17,7 @@ memeMart db = do
   putStrLn "Welcome to Meme Mart, how can i help you?~"
   putStrLn "Just enter your order, or \"exit\" to return to the Randomizer~"
   putStrLn "To see what we offer, look to Meme_Mart_Menu.txt or enter \"menu\"!~"
+  putStrLn "Most orders are combinable with eachother~"
   putStrLn "We are case insensitive now!~"
   hFlush stdout
 
@@ -58,6 +59,8 @@ memeSelection o db  ("dragons.", arg) = memeSelection o db  ("dragon.", arg)
 memeSelection o db  ("bridge", _) = (("allitem.","73"):o, True, "B R I D G E   K E Y")
 memeSelection o db  ("69", _) = (("69", ""):o, True, "It's 69, you gotta do it!!")
 memeSelection o db  ("allitem.", arg) = itemValidation o db ("allitem.", arg)
+memeSelection o db  ("devil", _) = (("devil", ""):o, True, "Every weapon can backfire!")
+memeSelection o db  ("brave", _) = (("brave", ""):o, True, "Every weapon will strike twice!")
 --- Invalid order
 memeSelection o db  other = (o, True, "Sorry, nothing like that in stock.~")
 

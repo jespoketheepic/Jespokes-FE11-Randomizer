@@ -14,6 +14,7 @@ import qualified Data.Text.Encoding as TE
 import GeneralUtility
 import Types
 import FixedEdits
+import Table
 
 --- Constants moved to: ---
 import DatabaseConstants
@@ -81,7 +82,7 @@ getPID :: BS.ByteString -> BS.ByteString -> ID
 getPID = getID 0
 
 getFID :: BS.ByteString -> BS.ByteString -> ID
-getFID = getID 4
+getFID xs ogxs = getID 4 xs ogxs
 
 getChrBases :: BS.ByteString -> [Word8]
 getChrBases = getStats 12
@@ -105,9 +106,9 @@ listClassesR xs ogxs i
   | otherwise = makeClass xs ogxs i : listClassesR (BS.drop classEntrySize xs) ogxs (i+1)
 
 makeClass :: BS.ByteString -> BS.ByteString -> Int -> Class
-makeClass xs ogxs nr = Class{classNr=fromIntegral nr, valid=markInvalidClass nr, jID=(getJID xs ogxs), classBases=(getClassBases xs), classGrowths=(getClassGrowths xs)
+makeClass xs ogxs nr = Class{classNr=fromIntegral nr, promotesFrom=Nothing, valid=markInvalidClass nr, jID=(getJID xs ogxs), classBases=(getClassBases xs), classGrowths=(getClassGrowths xs)
   , enemyGrowths=(getEnemyGrowths xs), statCaps=(getStatCaps xs), movement=(getMovement xs), wTypes=(getWTypes xs), reclassSet=(getReclassSet xs)
-  , promo=(getPromo xs nr), rawData_cls=(bytestringGetN classEntrySize xs)}
+  , promo=(getPromo xs nr), genericFace=getGenericFace xs, rawData_cls=(bytestringGetN classEntrySize xs)}
 
 getJID :: BS.ByteString -> BS.ByteString -> ID
 getJID = getID 0x00
@@ -148,6 +149,9 @@ specialPromo 0x26 = Base
 specialPromo 0x2B = Base
 specialPromo x = Promoted
 
+getGenericFace :: BS.ByteString -> Bool
+getGenericFace xs = foldl (\x y -> x + (fromIntegral y)) (0 :: Int) (getPointer 0x48 xs) == 0
+--if (foldl (\x y -> (fromIntegral x :: Int) + (fromIntegral y :: Int)) 0 (getPointer 0x48 xs)) == 0 then [0x03, 0xDE, 0x00, 0x00, 0xA7, 0xBE, 0x00, 0x00] else getStats 0x44 xs
 
 -- Items --
 listItems :: BS.ByteString -> [Item]
@@ -164,15 +168,16 @@ makeItem xs = makeItemSplit (BS.index xs 0x14) xs
 makeItemSplit :: Word8 -> BS.ByteString -> BS.ByteString -> Item
 makeItemSplit 8 xs ogxs = Thing{itemNr=(BS.index xs 0), randomGive=markDontGive (BS.index xs 0), iID=(getID 0x04 xs ogxs)
       , namePtr=(getID 0x08 xs ogxs), descPtr=(getID 0x0C xs ogxs), iconNr=(BS.index xs 0x10), price=(BS.index xs 0x12, BS.index xs 0x13)
-      , itemType=(BS.index xs 0x14), useEffect=(BS.index xs 0x15), uses=(BS.index xs 0x18), rawData_item=(bytestringGetN itemEntrySize xs)}
+      , itemType=(BS.index xs 0x14), useEffect=(BS.index xs 0x15), uses=(BS.index xs 0x18), effectFlags=(getEffectFlags xs), rawData_item=(bytestringGetN itemEntrySize xs)}
 makeItemSplit i xs ogxs = Weapon{itemNr=(BS.index xs 0), randomGive= markDontGive (BS.index xs 0), iID=(getID 0x04 xs ogxs)
       , namePtr=(getID 0x08 xs ogxs), descPtr=(getID 0x0C xs ogxs), iconNr=(BS.index xs 0x10), price=(BS.index xs 0x12, BS.index xs 0x13)
       , itemType=(BS.index xs 0x14), useEffect=(BS.index xs 0x15), uses=(BS.index xs 0x18), wpnLv=(BS.index xs 0x16), might=(BS.index xs 0x19)
       , hit=(BS.index xs 0x1A), crit=(BS.index xs 0x1B), weight=(BS.index xs 0x1C), range=(BS.index xs 0x1D, BS.index xs 0x1E)
-      , rawData_item=(bytestringGetN itemEntrySize xs)}
+      , effectFlags=(getEffectFlags xs), rawData_item=(bytestringGetN itemEntrySize xs)}
 
 
-
+getEffectFlags :: BS.ByteString -> [Word8]
+getEffectFlags = getStuff 0x1D 0x1F
 
 
 

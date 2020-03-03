@@ -54,6 +54,8 @@ data Class = Class{
   wTypes :: [Word8],
   reclassSet :: Word8,
   promo :: Promo,
+  genericFace :: Bool,
+  promotesFrom :: Maybe Class,
   rawData_cls :: [Word8]
 } deriving (Show)
 instance TableEntry Class where
@@ -75,6 +77,7 @@ data Item = Weapon{
     crit :: Word8,
     weight :: Word8,
     range :: (Word8, Word8),
+    effectFlags :: [Word8],
     randomGive :: Bool,
     rawData_item :: [Word8]
   } | Thing{
@@ -87,6 +90,7 @@ data Item = Weapon{
     itemType :: Word8,
     useEffect :: Word8,
     uses :: Word8,
+    effectFlags :: [Word8],
     randomGive :: Bool,
     rawData_item :: [Word8]
   } deriving (Show)

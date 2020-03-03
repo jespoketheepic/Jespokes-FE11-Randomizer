@@ -20,6 +20,7 @@ import Randomize
 import ApplyChanges
 import UpdateRawData
 import FixedEdits
+import MemeMartDeliver
 
 action :: IO ()
 action = do
@@ -50,20 +51,22 @@ action = do
   let databaseStruct3 = noteChrClass databaseStruct2 disposStruct
 
   --- Randomize ---
-  randG <- RNG.getStdGen
-  let (databaseStruct4, disposStruct2) = randomize databaseStruct3 disposStruct randG settings
+  rng <- RNG.getStdGen
+  let rngs = infiniteGenerators rng
+  let (databaseStruct4, disposStruct2) = randomize databaseStruct3 disposStruct (rngs !! 1) settings
   prfReport databaseStruct4 workingDirectory
   --- Meme Mart ---
-
+  let databaseStruct5 = memeMartDeliverDB (rngs !! 3) order databaseStruct4
+  let disposStruct3 = memeMartDeliverDispos databaseStruct5 (rngs !! 2) order disposStruct2
   --- Fixed post rando edits --
-  let disposStruct3 = fixedPostRandoDispEdits disposStruct2
+  let disposStruct4 = fixedPostRandoDispEdits disposStruct3
 
   --- Apply Changes ---
-  let databaseStruct5 = updateRawDataDB databaseStruct4
-  let disposStruct4 = updateRawDataDisp disposStruct3
-  applyChangesDB databaseStruct5 database databaseDirectory
-  applyChangesAllDispos disposStruct4
-  logChrs workingDirectory databaseStruct5
+  let databaseStruct6 = updateRawDataDB databaseStruct5
+  let disposStruct5 = updateRawDataDisp disposStruct4
+  applyChangesDB databaseStruct6 database databaseDirectory
+  applyChangesAllDispos disposStruct5
+  logChrs workingDirectory databaseStruct6
 
   --- Compress ---
   compress workingDirectory databaseDirectory
@@ -78,8 +81,9 @@ action = do
   --print (dbItems databaseStruct4)
   --putStrLn "\n"
   --print disposStruct3
-  putStrLn "Ok, done!"
-
+  putStrLn "Ok, done! Press enter to exit."
+  o <- getLine
+  putStrLn "Bye!"
   --let dispentries = concatMap (\x@DisposFile{entries} -> entries) disposStruct2
   --let uniquecharinvs = L.groupBy (dispGroup) ( L.sortBy (dispord) dispentries)
   --mapM_  (\x -> appendFile (workingDirectory ++ "\\DisposCount.txt") (show x ++ "\n")) uniquecharinvs

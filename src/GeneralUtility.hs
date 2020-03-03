@@ -24,7 +24,12 @@ module GeneralUtility (
   randomListElement,
   sumWord8ToInt_signed,
   word8ToInt_signed,
-  replaceAtIndex
+  replaceAtIndex,
+  incrementAtIndex,
+  mapDisposUpdate,
+  find_w_error,
+  findIndex_w_error,
+  mapDisposUpdateRNG
 ) where
 
 import Data.Word
@@ -35,6 +40,7 @@ import qualified System.Directory as Dir
 import System.IO
 import Types
 import qualified System.Random as R
+import qualified Data.Maybe as M
 
 import UnsafeTestkit
 
@@ -173,6 +179,32 @@ randomListElement list gen = list !! fst (R.randomR (0, length list - 1) gen)
 
 replaceAtIndex :: [a] -> a -> Int -> [a]
 replaceAtIndex list element index = (take index list) ++ element : drop (index+1) list
+
+incrementAtIndex :: Num a => [a] -> Int -> [a]
+incrementAtIndex list index = replaceAtIndex list ((list !! index) + 1) index
+
+mapDisposUpdate :: (DisposEntry -> DisposEntry) -> [DisposFile] -> [DisposFile]
+mapDisposUpdate func = map (mapDisposUpdate2 func)
+
+mapDisposUpdate2 :: (DisposEntry -> DisposEntry) -> DisposFile -> DisposFile
+mapDisposUpdate2 func dispF@DisposFile{entries} = dispF{entries= map func entries}
+
+mapDisposUpdateRNG :: (R.StdGen -> DisposEntry -> DisposEntry) -> [[R.StdGen]] -> [DisposFile] -> [DisposFile]
+mapDisposUpdateRNG func infinfrngs dispFs = map (mapDisposUpdateRNG2 func) (zip dispFs infinfrngs)
+
+mapDisposUpdateRNG2 :: (R.StdGen -> DisposEntry -> DisposEntry) -> (DisposFile, [R.StdGen]) -> DisposFile
+mapDisposUpdateRNG2 func (dispF@DisposFile{entries}, rngs) = dispF{entries= zipWith func rngs entries}
+
+find_w_error :: (a -> Bool) -> [a] -> String -> a
+find_w_error pred list message = M.fromMaybe (error message) (L.find pred list)
+
+findIndex_w_error :: (a -> Bool) -> [a] -> String -> Int
+findIndex_w_error pred list message = M.fromMaybe (error message) (L.findIndex pred list)
+
+
+
+
+
 
 --- Warning Supression
 {-# ANN awaitChar "HLint: ignore Use String" #-}

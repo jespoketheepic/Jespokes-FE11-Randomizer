@@ -46,12 +46,12 @@ chrEntryMask chr@Character{pID=pID, fID=fID, chrBases=chrBases, chrGrowths=chrGr
 updateRawCls :: Class -> Class
 updateRawCls cls@Class{rawData_cls=rawData} =
   let updateMasks = clsEntryMask cls
-      newRawData = zipWithMaskTup rawData updateMasks
+      newRawData = zipWithMaskTup_errorOnMismatchedInput rawData updateMasks
   in cls{rawData_cls=newRawData}
 
 clsEntryMask :: Class -> [(Word8, Bool)]
 clsEntryMask chr@Class{jID=jID, classBases=classBases,classGrowths=classGrowths, enemyGrowths=enemyGrowths,
- statCaps=statCaps, movement=(movetype, mov), reclassSet=reclassSet, promo=promo, wTypes=wTypes} =
+ statCaps=statCaps, movement=(movetype, mov), reclassSet=reclassSet, promo=promo, wTypes=wTypes, genericFace} =
   maskTupleize (fst jID) True
   ++ replicate 4 (0, False)
   ++ maskTupleize classBases True
@@ -63,7 +63,8 @@ clsEntryMask chr@Class{jID=jID, classBases=classBases,classGrowths=classGrowths,
   ++ maskTupleize wTypes True
   ++ replicate 2 (0, False)
   ++ [(reclassSet, True)]
-  ++ replicate 39 (0, False)
+  ++ replicate 0x13 (0, False)
+  ++ replicate 0x14 (0, False)
 
 
 --- Item ---
@@ -79,7 +80,7 @@ updateRawItem item@Thing{rawData_item=rawData} =
 
 weaponEntryMask :: Item -> [(Word8, Bool)]
 weaponEntryMask Weapon{iID=iID, itemNr=itemNr, namePtr, descPtr, iconNr, price, itemType=itemType, useEffect=useEffect,
- uses=uses, wpnLv=wpnLv, might, hit, crit, weight, range} =
+ uses=uses, wpnLv=wpnLv, might, hit, crit, weight, range, effectFlags} =
      [(itemNr, True)]
   ++ replicate 3 (0, False)
   ++ maskTupleize (fst iID) True
@@ -94,10 +95,10 @@ weaponEntryMask Weapon{iID=iID, itemNr=itemNr, namePtr, descPtr, iconNr, price, 
   ++ [(0, False)] -- Weapon Exp
   ++ [(uses, True)]
   ++ [(might, True), (hit, True), (crit, True), (weight, True), (fst range, True) , (snd range, True)]
-  ++ replicate 0x1D (0, False)
+  ++ maskTupleize effectFlags True
 
 thingEntryMask :: Item -> [(Word8, Bool)]
-thingEntryMask Thing{iID=iID, itemNr=itemNr, namePtr, descPtr, iconNr, price, itemType=itemType, useEffect=useEffect, uses=uses} =
+thingEntryMask Thing{iID=iID, itemNr=itemNr, namePtr, descPtr, iconNr, price, itemType=itemType, useEffect=useEffect, uses=uses, effectFlags} =
      [(itemNr, True)]
   ++ replicate 3 (0, False)
   ++ maskTupleize (fst iID) True
@@ -112,7 +113,7 @@ thingEntryMask Thing{iID=iID, itemNr=itemNr, namePtr, descPtr, iconNr, price, it
   ++ [(0, False)] -- Weapon Exp
   ++ [(uses, True)]
   ++ replicate 6 (0, False)
-  ++ replicate 0x1D (0, False)
+  ++ maskTupleize effectFlags True
 
 
 --- Dispos ---

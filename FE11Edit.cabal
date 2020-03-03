@@ -41,6 +41,7 @@ library
       , UpdateRawData
       , FixedEdits
       , Table
+      , MemeMartDeliver
   other-modules:
       Paths_FE11Edit
   hs-source-dirs:

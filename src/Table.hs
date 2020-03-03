@@ -1,5 +1,7 @@
 module Table where
 
+import Data.Word
+
 mapChrNrToChapter :: Int -> String
 mapChrNrToChapter 0x0 = "001"
 mapChrNrToChapter 0x1 = "001"
@@ -61,3 +63,22 @@ mapChrNrToChapter 0x38 = "103"
 mapChrNrToChapter 0x39 = "104"
 mapChrNrToChapter 0x3A = "021"
 mapChrNrToChapter x = "LUL"
+
+promotesFromTable :: Word8 -> Maybe Word8
+promotesFromTable 0x05 = Just 0x02
+promotesFromTable 0x08 = Just 0x06
+promotesFromTable 0x0B = Just 0x0A
+promotesFromTable 0x0E = Just 0x0C
+promotesFromTable 0x0F = Just 0x0D
+promotesFromTable 0x11 = Just 0x10
+promotesFromTable 0x14 = Just 0x12
+promotesFromTable 0x15 = Just 0x13
+promotesFromTable 0x17 = Just 0x16
+promotesFromTable 0x19 = Just 0x18
+promotesFromTable 0x1B = Just 0x1A
+promotesFromTable 0x1D = Just 0x1C
+promotesFromTable 0x22 = Just 0x1E
+promotesFromTable 0x23 = Just 0x1F
+promotesFromTable 0x24 = Just 0x20
+promotesFromTable 0x25 = Just 0x21
+promotesFromTable w = Nothing

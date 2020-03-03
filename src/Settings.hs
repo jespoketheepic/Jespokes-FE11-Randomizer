@@ -61,10 +61,10 @@ gatherSettings = do
   putStrLn "1 for no reclassing. The reccomended option, as the game otherwise won't be much different from normal."
   putStrLn "2 for randomized class sets. 3 class sets as ususal, but which class is in which one is random."
   putStrLn "3 for normal class sets."
-  putStrLn "4 for unified standard class sets. All standard classes can reclass to each other."
-  putStrLn "5 for unified class sets + Special class set. The same as 4, except now the special classes can also reclass to each other."
-  putStrLn "\nNotes:"
-  putStrLn "* Because the special classes can level to 30, they won't be put in class sets with standard classes."
+--  putStrLn "4 for unified standard class sets. All standard classes can reclass to each other."
+--  putStrLn "5 for unified class sets + Special class set. The same as 4, except now the special classes can also reclass to each other."
+--  putStrLn "\nNotes:"
+--  putStrLn "* Because the special classes can level to 30, they won't be put in class sets with standard classes."
   putStrLn "* The random class sets for before/after promotion don't line up."
   hFlush stdout
   reclassSetting <- reclassPrompt
